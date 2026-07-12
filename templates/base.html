@@ -104,6 +104,7 @@
 
     /* Sidebar */
     .sidebar {
+        position: relative;
         min-height: calc(100vh - 70px);
         background: #0d1f3c;
         border-right: 1px solid rgba(255,255,255,0.05);
@@ -113,7 +114,40 @@
         display: flex;
         flex-direction: column;
         gap: 0.25rem;
+        transition: width 220ms cubic-bezier(.4,0,.2,1), padding 220ms cubic-bezier(.4,0,.2,1);
     }
+    .sidebar .sidebar-toggle {
+        position: absolute;
+        top: 18px;
+        right: -18px; /* sit slightly outside the sidebar for a floating toggle */
+        width: 32px;
+        height: 32px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(2,6,23,0.55); /* darker, subtle */
+        border: 1px solid rgba(255,255,255,0.06);
+        color: #e6eef8;
+        border-radius: 50%;
+        cursor: pointer;
+        box-shadow: none; /* remove heavy ring */
+        transition: transform 0.18s ease, background 0.18s ease, right 180ms ease;
+        z-index: 1050;
+    }
+    .sidebar .sidebar-toggle:hover { transform: translateX(-3px); background: rgba(255,255,255,0.04); }
+    .sidebar .sidebar-toggle i { transition: transform 180ms ease; font-size: 13px; }
+
+    /* Collapsed sidebar */
+    .sidebar.collapsed { width: 72px !important; padding: 1.25rem 0.5rem; }
+    .sidebar.collapsed .sidebar-category { display: none; }
+    .sidebar.collapsed a { justify-content: center; padding: 0.6rem 0.4rem; }
+    .sidebar.collapsed a i { margin-right: 0; }
+    .sidebar .menu-text { transition: opacity 0.18s ease, margin 0.18s ease; }
+    .sidebar.collapsed .menu-text { opacity: 0; width: 0; margin: 0; overflow: hidden; display: inline-block; }
+    .sidebar.collapsed .sidebar-toggle i,
+    .sidebar .sidebar-toggle.collapsed i { transform: rotate(180deg); }
+    /* ensure toggle sits correctly when collapsed */
+    .sidebar.collapsed .sidebar-toggle { right: -16px; }
     .sidebar-category {
         font-size: 0.68rem;
         text-transform: uppercase;
@@ -687,40 +721,41 @@
 
 <div class="d-flex flex-grow-1">
   {% if user.is_authenticated %}
-  <div class="sidebar">
+  <div class="sidebar" id="mainSidebar">
+    <button id="sidebarToggleBtn" class="sidebar-toggle" title="Toggle sidebar"><i class="fa-solid fa-chevron-left"></i></button>
     <div class="sidebar-category">Core Ops</div>
     <a href="{% url 'dashboard:home' %}" class="{% if request.path == '/' or request.resolver_match.url_name == 'home' %}active{% endif %}">
-        <i class="fa-solid fa-chart-pie me-2"></i>Dashboard
+        <i class="fa-solid fa-chart-pie me-2"></i><span class="menu-text">Dashboard</span>
     </a>
     <a href="{% url 'vehicles:list' %}" class="{% if '/vehicles/' in request.path %}active{% endif %}">
-        <i class="fa-solid fa-truck me-2"></i>Vehicles
+        <i class="fa-solid fa-truck me-2"></i><span class="menu-text">Vehicles</span>
     </a>
     <a href="{% url 'drivers:list' %}" class="{% if '/drivers/' in request.path %}active{% endif %}">
-        <i class="fa-solid fa-users me-2"></i>Drivers
+        <i class="fa-solid fa-users me-2"></i><span class="menu-text">Drivers</span>
     </a>
     <a href="{% url 'trips:list' %}" class="{% if '/trips/' in request.path %}active{% endif %}">
-        <i class="fa-solid fa-route me-2"></i>Trips
+        <i class="fa-solid fa-route me-2"></i><span class="menu-text">Trips</span>
     </a>
 
     <div class="sidebar-category">Logs & Maintenance</div>
     <a href="{% url 'maintenance:list' %}" class="{% if '/maintenance/' in request.path %}active{% endif %}">
-        <i class="fa-solid fa-screwdriver-wrench me-2"></i>Maintenance
+        <i class="fa-solid fa-screwdriver-wrench me-2"></i><span class="menu-text">Maintenance</span>
     </a>
     <a href="{% url 'fuel:list' %}" class="{% if '/fuel/' in request.path %}active{% endif %}">
-        <i class="fa-solid fa-gas-pump me-2"></i>Fuel Logs
+        <i class="fa-solid fa-gas-pump me-2"></i><span class="menu-text">Fuel Logs</span>
     </a>
 
     <div class="sidebar-category">Finance & Stats</div>
     <a href="{% url 'expenses:list' %}" class="{% if '/expenses/' in request.path %}active{% endif %}">
-        <i class="fa-solid fa-wallet me-2"></i>Expenses
+        <i class="fa-solid fa-wallet me-2"></i><span class="menu-text">Expenses</span>
     </a>
     <a href="{% url 'dashboard:reports' %}" class="{% if '/reports' in request.path or request.resolver_match.url_name == 'reports' %}active{% endif %}">
-        <i class="fa-solid fa-chart-line me-2"></i>Reports
+        <i class="fa-solid fa-chart-line me-2"></i><span class="menu-text">Reports</span>
     </a>
 
     <div class="sidebar-category">System</div>
     <a href="/admin/">
-        <i class="fa-solid fa-gears me-2"></i>Admin Panel
+        <i class="fa-solid fa-gears me-2"></i><span class="menu-text">Admin Panel</span>
     </a>
   </div>
   {% endif %}
@@ -770,6 +805,35 @@ document.querySelectorAll('form input, form select, form textarea').forEach(func
       updateThemeButton();
     });
   }
+})();
+</script>
+<script>
+/* Sidebar collapse/expand behavior */
+(function(){
+    var sidebar = document.getElementById('mainSidebar');
+    var toggle = document.getElementById('sidebarToggleBtn');
+    if (!sidebar || !toggle) return;
+
+    function setCollapsed(state){
+        if(state){
+            sidebar.classList.add('collapsed');
+            toggle.classList.add('collapsed');
+            document.body.dataset.sidebar = 'collapsed';
+        } else {
+            sidebar.classList.remove('collapsed');
+            toggle.classList.remove('collapsed');
+            document.body.dataset.sidebar = 'expanded';
+        }
+    }
+
+    var saved = localStorage.getItem('transitopsSidebar');
+    setCollapsed(saved === 'collapsed');
+
+    toggle.addEventListener('click', function(e){
+        var nowCollapsed = sidebar.classList.contains('collapsed');
+        setCollapsed(!nowCollapsed);
+        localStorage.setItem('transitopsSidebar', sidebar.classList.contains('collapsed') ? 'collapsed' : 'expanded');
+    });
 })();
 </script>
 {% block extra_js %}{% endblock %}
