@@ -1,20 +1,24 @@
 {% extends "base.html" %}
 {% block title %}Maintenance - TransitOps{% endblock %}
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-3">
-  <h3><i class="fa-solid fa-screwdriver-wrench text-primary"></i> Maintenance Log</h3>
+<div class="page-header">
+  <div>
+    <h2 class="page-title">Maintenance Registry</h2>
+    <p class="page-subtitle">Schedule, log, and audit vehicle repairs, regular servicing, and workshop maintenance costs.</p>
+  </div>
   <a href="{% url 'maintenance:add' %}" class="btn btn-primary"><i class="fa-solid fa-plus"></i> New Record</a>
 </div>
+
 <div class="card p-3">
 <div class="table-responsive">
 <table class="table table-hover align-middle">
-  <thead><tr><th>Vehicle</th><th>Title</th><th>Cost</th><th>Reported</th><th>Closed</th><th>Status</th><th>Actions</th></tr></thead>
+  <thead><tr><th>Vehicle</th><th>Service Title</th><th>Repair Cost</th><th>Date Reported</th><th>Date Closed</th><th>Status</th><th>Actions</th></tr></thead>
   <tbody>
     {% for log in logs %}
     <tr>
-      <td>{{ log.vehicle.registration_number }}</td>
+      <td><strong>{{ log.vehicle.registration_number }}</strong><br><small class="text-muted">{{ log.vehicle.name }}</small></td>
       <td>{{ log.title }}</td>
-      <td>₹{{ log.cost }}</td>
+      <td><strong>₹{{ log.cost }}</strong></td>
       <td>{{ log.date_reported }}</td>
       <td>{{ log.date_closed|default:"-" }}</td>
       <td>
@@ -23,8 +27,8 @@
       </td>
       <td>
         {% if log.status == "OPEN" %}
-        <a href="{% url 'maintenance:close' log.pk %}" class="btn btn-sm btn-success" onclick="return confirm('Close this maintenance record?')">Close</a>
-        {% else %}<span class="text-muted">—</span>{% endif %}
+        <a href="{% url 'maintenance:close' log.pk %}" class="btn btn-sm btn-success" onclick="return confirm('Close this maintenance record?')"><i class="fa-solid fa-check"></i> Close Record</a>
+        {% else %}<span class="text-muted small">—</span>{% endif %}
       </td>
     </tr>
     {% empty %}

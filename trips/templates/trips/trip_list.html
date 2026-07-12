@@ -1,36 +1,47 @@
 {% extends "base.html" %}
 {% block title %}Trips - TransitOps{% endblock %}
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-3">
-  <h3><i class="fa-solid fa-route text-primary"></i> Trip Management</h3>
+<div class="page-header">
+  <div>
+    <h2 class="page-title">Trip Management</h2>
+    <p class="page-subtitle">Create, dispatch, complete, and track trips across your supply chain network.</p>
+  </div>
   <a href="{% url 'trips:add' %}" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Create Trip</a>
 </div>
 
-<form method="get" class="row g-2 mb-3">
-  <div class="col-auto">
-    <select name="status" class="form-select">
-      <option value="">All Statuses</option>
-      {% for val, label in status_choices %}
-        <option value="{{ val }}" {% if request.GET.status == val %}selected{% endif %}>{{ label }}</option>
-      {% endfor %}
-    </select>
-  </div>
-  <div class="col-auto"><button class="btn btn-outline-primary" type="submit"><i class="fa-solid fa-filter"></i></button></div>
-</form>
+<div class="filter-card">
+  <form method="get" class="row g-3 align-items-end">
+    <div class="col-md-9 col-sm-8">
+      <label class="form-label">Trip Status</label>
+      <select name="status" class="form-select">
+        <option value="">All Statuses</option>
+        {% for val, label in status_choices %}
+          <option value="{{ val }}" {% if request.GET.status == val %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-3 col-sm-4">
+      <div class="d-flex gap-2">
+        <button class="btn btn-primary w-100" type="submit"><i class="fa-solid fa-filter"></i> Filter</button>
+        <a href="{% url 'trips:list' %}" class="btn btn-outline-secondary"><i class="fa-solid fa-arrows-rotate"></i></a>
+      </div>
+    </div>
+  </form>
+</div>
 
 <div class="card p-3">
 <div class="table-responsive">
 <table class="table table-hover align-middle">
-  <thead><tr><th>#</th><th>Route</th><th>Vehicle</th><th>Driver</th><th>Cargo (kg)</th><th>Distance (km)</th><th>Status</th><th>Actions</th></tr></thead>
+  <thead><tr><th>ID</th><th>Route</th><th>Vehicle</th><th>Driver</th><th>Cargo (kg)</th><th>Distance (km)</th><th>Status</th><th>Actions</th></tr></thead>
   <tbody>
     {% for t in trips %}
     <tr>
-      <td>{{ t.id }}</td>
-      <td>{{ t.source }} → {{ t.destination }}</td>
+      <td><code>#{{ t.id }}</code></td>
+      <td><strong>{{ t.source }}</strong> <i class="fa-solid fa-arrow-right text-muted small mx-1"></i> <strong>{{ t.destination }}</strong></td>
       <td>{{ t.vehicle.registration_number }}</td>
       <td>{{ t.driver.name }}</td>
-      <td>{{ t.cargo_weight_kg }}</td>
-      <td>{{ t.planned_distance_km }}</td>
+      <td>{{ t.cargo_weight_kg }} kg</td>
+      <td>{{ t.planned_distance_km }} km</td>
       <td>
         {% if t.status == "DRAFT" %}<span class="badge bg-secondary badge-status">Draft</span>
         {% elif t.status == "DISPATCHED" %}<span class="badge bg-primary badge-status">Dispatched</span>
@@ -45,7 +56,7 @@
           <a href="{% url 'trips:complete' t.pk %}" class="btn btn-sm btn-success"><i class="fa-solid fa-flag-checkered"></i> Complete</a>
           <a href="{% url 'trips:cancel' t.pk %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Cancel this trip?')">Cancel</a>
         {% else %}
-          <span class="text-muted">—</span>
+          <span class="text-muted small">—</span>
         {% endif %}
       </td>
     </tr>

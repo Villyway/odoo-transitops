@@ -36,53 +36,53 @@
 
 <div class="row g-3">
   <div class="col-md-3 col-sm-6">
-    <div class="card kpi-card p-3">
-      <div class="text-muted small">Active Vehicles</div>
+    <div class="card kpi-card kpi-info p-3">
+      <div class="kpi-title">Active Vehicles</div>
       <div class="kpi-value text-primary">{{ active_vehicles }}</div>
     </div>
   </div>
   <div class="col-md-3 col-sm-6">
-    <div class="card kpi-card p-3">
-      <div class="text-muted small">Available Vehicles</div>
+    <div class="card kpi-card kpi-success p-3">
+      <div class="kpi-title">Available Vehicles</div>
       <div class="kpi-value text-success">{{ available_vehicles }}</div>
     </div>
   </div>
   <div class="col-md-3 col-sm-6">
-    <div class="card kpi-card p-3">
-      <div class="text-muted small">Vehicles In Maintenance</div>
+    <div class="card kpi-card kpi-warning p-3">
+      <div class="kpi-title">In Maintenance</div>
       <div class="kpi-value text-warning">{{ in_maintenance }}</div>
     </div>
   </div>
   <div class="col-md-3 col-sm-6">
-    <div class="card kpi-card p-3">
-      <div class="text-muted small">Fleet Utilization</div>
+    <div class="card kpi-card kpi-info p-3">
+      <div class="kpi-title">Fleet Utilization</div>
       <div class="kpi-value text-info">{{ fleet_utilization }}%</div>
     </div>
   </div>
   <div class="col-md-4 col-sm-6">
-    <div class="card kpi-card p-3">
-      <div class="text-muted small">Active Trips</div>
+    <div class="card kpi-card kpi-primary p-3">
+      <div class="kpi-title">Active Trips</div>
       <div class="kpi-value text-primary">{{ active_trips }}</div>
     </div>
   </div>
   <div class="col-md-4 col-sm-6">
-    <div class="card kpi-card p-3">
-      <div class="text-muted small">Pending Trips</div>
-      <div class="kpi-value text-secondary">{{ pending_trips }}</div>
+    <div class="card kpi-card kpi-secondary p-3">
+      <div class="kpi-title">Pending Trips</div>
+      <div class="kpi-value text-muted">{{ pending_trips }}</div>
     </div>
   </div>
   <div class="col-md-4 col-sm-6">
-    <div class="card kpi-card p-3">
-      <div class="text-muted small">Drivers On Duty</div>
+    <div class="card kpi-card kpi-dark p-3">
+      <div class="kpi-title">Drivers On Duty</div>
       <div class="kpi-value text-dark">{{ drivers_on_duty }}</div>
     </div>
   </div>
 </div>
 
-<div class="mt-4">
+<div class="mt-4 d-flex gap-2 flex-wrap">
   <a href="{% url 'trips:add' %}" class="btn btn-primary"><i class="fa-solid fa-plus"></i> New Trip</a>
   <a href="{% url 'vehicles:add' %}" class="btn btn-outline-primary"><i class="fa-solid fa-plus"></i> Register Vehicle</a>
   <a href="{% url 'drivers:add' %}" class="btn btn-outline-primary"><i class="fa-solid fa-plus"></i> Add Driver</a>
-  <a href="{% url 'dashboard:reports' %}" class="btn btn-outline-dark"><i class="fa-solid fa-chart-line"></i> View Reports</a>
+  <a href="{% url 'dashboard:reports' %}" class="btn btn-outline-secondary"><i class="fa-solid fa-chart-line"></i> View Reports</a>
 </div>
 {% endblock %}

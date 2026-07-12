@@ -1,9 +1,12 @@
 {% extends "base.html" %}
 {% block title %}Reports - TransitOps{% endblock %}
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-3">
-  <h3><i class="fa-solid fa-chart-line text-primary"></i> Reports & Analytics</h3>
-  <a href="{% url 'dashboard:reports_csv' %}" class="btn btn-success"><i class="fa-solid fa-file-csv"></i> Export CSV</a>
+<div class="page-header">
+  <div>
+    <h2 class="page-title">Reports & Analytics</h2>
+    <p class="page-subtitle">Detailed audit of mileage, fuel consumption efficiency, operational costs, revenue, and ROI per vehicle.</p>
+  </div>
+  <a href="{% url 'dashboard:reports_csv' %}" class="btn btn-primary"><i class="fa-solid fa-file-csv"></i> Export CSV</a>
 </div>
 
 <div class="table-responsive card p-3">
@@ -11,13 +14,13 @@
   <thead>
     <tr>
       <th>Vehicle</th>
-      <th>Distance (km)</th>
-      <th>Fuel (L)</th>
+      <th>Distance</th>
+      <th>Fuel Used</th>
       <th>Fuel Cost</th>
-      <th>Maintenance Cost</th>
+      <th>Maint. Cost</th>
       <th>Other Expenses</th>
-      <th>Total Operational Cost</th>
-      <th>Fuel Efficiency (km/L)</th>
+      <th>Total Op. Cost</th>
+      <th>Efficiency</th>
       <th>Revenue</th>
       <th>ROI (%)</th>
     </tr>
@@ -26,13 +29,13 @@
     {% for row in rows %}
     <tr>
       <td><strong>{{ row.vehicle.registration_number }}</strong><br><small class="text-muted">{{ row.vehicle.name }}</small></td>
-      <td>{{ row.total_distance }}</td>
-      <td>{{ row.total_fuel_liters }}</td>
+      <td>{{ row.total_distance }} km</td>
+      <td>{{ row.total_fuel_liters }} L</td>
       <td>₹{{ row.total_fuel_cost }}</td>
       <td>₹{{ row.total_maintenance_cost }}</td>
       <td>₹{{ row.total_expense_cost }}</td>
       <td><strong>₹{{ row.operational_cost }}</strong></td>
-      <td>{{ row.fuel_efficiency }}</td>
+      <td>{{ row.fuel_efficiency }} km/L</td>
       <td>₹{{ row.total_revenue }}</td>
       <td>
         {% if row.roi_percent is not None %}
