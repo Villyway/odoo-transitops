@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.db.models import ProtectedError
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Driver
 from .forms import DriverForm
@@ -59,6 +60,23 @@ def driver_delete(request, pk):
     if not request.user.is_fleet_manager():
         messages.error(request, "Only Fleet Managers can delete drivers.")
         return redirect("drivers:list")
-    driver.delete()
-    messages.success(request, "Driver deleted.")
+
+    pending_trips = driver.trips.count()
+    if pending_trips:
+        messages.error(
+            request,
+            f"Cannot delete driver because {pending_trips} trip(s) still reference this driver. "
+            "Reassign or remove the trips first."
+        )
+        return redirect("drivers:list")
+
+    try:
+        driver.delete()
+        messages.success(request, "Driver deleted.")
+    except ProtectedError:
+        messages.error(
+            request,
+            "This driver cannot be deleted because there are protected trip references. "
+            "Please clear associated trips before deleting."
+        )
     return redirect("drivers:list")
