@@ -1,19 +1,70 @@
 {% extends "base.html" %}
 {% block title %}{{ title }} - TransitOps{% endblock %}
 {% block content %}
-<h3 class="mb-3">{{ title }}</h3>
-<div class="card p-4" style="max-width:600px;">
-<form method="post">
-  {% csrf_token %}
-  {% for field in form %}
-    <div class="mb-3">
-      <label class="form-label">{{ field.label }}</label>
-      {{ field }}
-      {% if field.errors %}<div class="text-danger small">{{ field.errors }}</div>{% endif %}
+
+<div class="page-header">
+  <div>
+    <h2 class="page-title">{{ title }}</h2>
+    <p class="page-subtitle">Provide driver credentials, license details, and contact information.</p>
+  </div>
+  <a href="{% url 'drivers:list' %}" class="btn btn-outline-secondary">
+    <i class="fa-solid fa-arrow-left"></i> Back to Drivers
+  </a>
+</div>
+
+<div class="form-page-wrapper">
+  <div class="form-card">
+
+    <div class="form-card-header">
+      <div class="icon-circle"><i class="fa-solid fa-users"></i></div>
+      <div>
+        <h4>Driver Profile</h4>
+        <p>Complete all fields to register a driver in the fleet management system.</p>
+      </div>
     </div>
-  {% endfor %}
-  <button type="submit" class="btn btn-primary">Save</button>
-  <a href="{% url 'drivers:list' %}" class="btn btn-outline-secondary">Cancel</a>
-</form>
+
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-card-body">
+
+        <p class="form-section-label"><i class="fa-solid fa-id-card me-1"></i> Personal & Contact Details</p>
+        <div class="form-field-group mb-4">
+          {% for field in form %}
+            {% if field.name == "name" or field.name == "contact_number" %}
+            <div class="form-field-item">
+              <label class="form-label">{{ field.label }}</label>
+              {{ field }}
+              {% if field.errors %}<div class="text-danger small mt-1">{{ field.errors }}</div>{% endif %}
+            </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+
+        <p class="form-section-label"><i class="fa-solid fa-certificate me-1"></i> Licensing & Safety</p>
+        <div class="form-field-group mb-4">
+          {% for field in form %}
+            {% if field.name == "license_number" or field.name == "license_category" or field.name == "license_expiry_date" or field.name == "safety_score" or field.name == "status" %}
+            <div class="form-field-item">
+              <label class="form-label">{{ field.label }}</label>
+              {{ field }}
+              {% if field.errors %}<div class="text-danger small mt-1">{{ field.errors }}</div>{% endif %}
+            </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+
+      </div>
+
+      <div class="form-card-footer">
+        <button type="submit" class="btn btn-primary">
+          <i class="fa-solid fa-floppy-disk"></i> Save Driver
+        </button>
+        <a href="{% url 'drivers:list' %}" class="btn btn-outline-secondary">
+          <i class="fa-solid fa-xmark"></i> Cancel
+        </a>
+      </div>
+    </form>
+
+  </div>
 </div>
 {% endblock %}
