@@ -13,8 +13,8 @@ class Trip(models.Model):
 
     source = models.CharField(max_length=150)
     destination = models.CharField(max_length=150)
-    vehicle = models.ForeignKey(Vehicle, on_delete=models.PROTECT, related_name="trips")
-    driver = models.ForeignKey(Driver, on_delete=models.PROTECT, related_name="trips")
+    vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE, related_name="trips")
+    driver = models.ForeignKey(Driver, on_delete=models.CASCADE, related_name="trips")
     cargo_weight_kg = models.DecimalField(max_digits=10, decimal_places=2)
     planned_distance_km = models.DecimalField(max_digits=10, decimal_places=2)
     final_odometer_km = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
