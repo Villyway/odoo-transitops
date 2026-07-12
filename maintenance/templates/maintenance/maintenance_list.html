@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Maintenance - TransitOps{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h3><i class="fa-solid fa-screwdriver-wrench text-primary"></i> Maintenance Log</h3>
+  <a href="{% url 'maintenance:add' %}" class="btn btn-primary"><i class="fa-solid fa-plus"></i> New Record</a>
+</div>
+<div class="card p-3">
+<div class="table-responsive">
+<table class="table table-hover align-middle">
+  <thead><tr><th>Vehicle</th><th>Title</th><th>Cost</th><th>Reported</th><th>Closed</th><th>Status</th><th>Actions</th></tr></thead>
+  <tbody>
+    {% for log in logs %}
+    <tr>
+      <td>{{ log.vehicle.registration_number }}</td>
+      <td>{{ log.title }}</td>
+      <td>₹{{ log.cost }}</td>
+      <td>{{ log.date_reported }}</td>
+      <td>{{ log.date_closed|default:"-" }}</td>
+      <td>
+        {% if log.status == "OPEN" %}<span class="badge bg-warning text-dark badge-status">Open</span>
+        {% else %}<span class="badge bg-success badge-status">Closed</span>{% endif %}
+      </td>
+      <td>
+        {% if log.status == "OPEN" %}
+        <a href="{% url 'maintenance:close' log.pk %}" class="btn btn-sm btn-success" onclick="return confirm('Close this maintenance record?')">Close</a>
+        {% else %}<span class="text-muted">—</span>{% endif %}
+      </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="7" class="text-center text-muted py-4">No maintenance records yet.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+</div>
+{% endblock %}

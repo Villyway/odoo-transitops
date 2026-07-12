@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Vehicles - TransitOps{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h3><i class="fa-solid fa-van-shuttle text-primary"></i> Vehicle Registry</h3>
+  <a href="{% url 'vehicles:add' %}" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Register Vehicle</a>
+</div>
+
+<form method="get" class="row g-2 mb-3">
+  <div class="col-auto">
+    <input type="text" name="q" value="{{ request.GET.q|default:'' }}" class="form-control" placeholder="Search reg. no / name">
+  </div>
+  <div class="col-auto">
+    <select name="type" class="form-select">
+      <option value="">All Types</option>
+      {% for val, label in type_choices %}
+        <option value="{{ val }}" {% if request.GET.type == val %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-auto">
+    <select name="status" class="form-select">
+      <option value="">All Statuses</option>
+      {% for val, label in status_choices %}
+        <option value="{{ val }}" {% if request.GET.status == val %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-auto"><button class="btn btn-outline-primary" type="submit"><i class="fa-solid fa-search"></i></button></div>
+</form>
+
+<div class="card p-3">
+<div class="table-responsive">
+<table class="table table-hover align-middle">
+  <thead><tr><th>Reg. No</th><th>Name</th><th>Type</th><th>Max Load (kg)</th><th>Odometer (km)</th><th>Region</th><th>Status</th><th>Actions</th></tr></thead>
+  <tbody>
+    {% for v in vehicles %}
+    <tr>
+      <td>{{ v.registration_number }}</td>
+      <td>{{ v.name }}</td>
+      <td>{{ v.get_vehicle_type_display }}</td>
+      <td>{{ v.max_load_capacity_kg }}</td>
+      <td>{{ v.odometer_km }}</td>
+      <td>{{ v.region|default:"-" }}</td>
+      <td>
+        {% if v.status == "AVAILABLE" %}<span class="badge bg-success badge-status">Available</span>
+        {% elif v.status == "ON_TRIP" %}<span class="badge bg-primary badge-status">On Trip</span>
+        {% elif v.status == "IN_SHOP" %}<span class="badge bg-warning text-dark badge-status">In Shop</span>
+        {% else %}<span class="badge bg-secondary badge-status">Retired</span>{% endif %}
+      </td>
+      <td>
+        <a href="{% url 'vehicles:edit' v.pk %}" class="btn btn-sm btn-outline-primary"><i class="fa-solid fa-edit"></i></a>
+        <a href="{% url 'vehicles:delete' v.pk %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this vehicle?')"><i class="fa-solid fa-trash"></i></a>
+      </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="8" class="text-center text-muted py-4">No vehicles registered yet.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+</div>
+{% endblock %}
