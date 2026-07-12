@@ -1,15 +1,14 @@
 import csv
-from django.contrib.auth.decorators import login_required
+from trips.models import Trip
+from fuel.models import FuelLog
+from drivers.models import Driver
+from vehicles.models import Vehicle
 from django.shortcuts import render
+from expenses.models import Expense
 from django.http import HttpResponse
 from django.db.models import Sum, Count, Q
-
-from vehicles.models import Vehicle
-from drivers.models import Driver
-from trips.models import Trip
 from maintenance.models import MaintenanceLog
-from fuel.models import FuelLog
-from expenses.models import Expense
+from django.contrib.auth.decorators import login_required
 
 
 @login_required

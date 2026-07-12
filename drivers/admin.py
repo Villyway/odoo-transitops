@@ -1,5 +1,5 @@
-from django.contrib import admin
 from .models import Driver
+from django.contrib import admin
 
 
 @admin.register(Driver)
