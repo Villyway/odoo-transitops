@@ -1,21 +1,75 @@
 {% extends "base.html" %}
 {% block title %}{{ title }} - TransitOps{% endblock %}
 {% block content %}
-<h3 class="mb-3">{{ title }}</h3>
-<div class="card p-4" style="max-width:650px;">
-<form method="post">
-  {% csrf_token %}
-  {% for field in form %}
-    <div class="mb-3">
-      <label class="form-label">{{ field.label }}</label>
-      {{ field }}
-      {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
-      {% if field.errors %}<div class="text-danger small">{{ field.errors }}</div>{% endif %}
+
+<div class="page-header">
+  <div>
+    <h2 class="page-title">{{ title }}</h2>
+    <p class="page-subtitle">Assign a vehicle, driver, and route details to create a new dispatching record.</p>
+  </div>
+  <a href="{% url 'trips:list' %}" class="btn btn-outline-secondary">
+    <i class="fa-solid fa-arrow-left"></i> Back to Trips
+  </a>
+</div>
+
+<div class="form-page-wrapper">
+  <div class="form-card">
+
+    <div class="form-card-header">
+      <div class="icon-circle"><i class="fa-solid fa-route"></i></div>
+      <div>
+        <h4>Trip Details</h4>
+        <p>All trips are created as drafts and must be manually dispatched after creation.</p>
+      </div>
     </div>
-  {% endfor %}
-  {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
-  <button type="submit" class="btn btn-primary">Create Trip (Draft)</button>
-  <a href="{% url 'trips:list' %}" class="btn btn-outline-secondary">Cancel</a>
-</form>
+
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-card-body">
+
+        <p class="form-section-label"><i class="fa-solid fa-map-location-dot me-1"></i> Route & Assignment</p>
+        <div class="form-field-group mb-4">
+          {% for field in form %}
+            {% if field.name == "source" or field.name == "destination" or field.name == "vehicle" or field.name == "driver" %}
+            <div class="form-field-item">
+              <label class="form-label">{{ field.label }}</label>
+              {{ field }}
+              {% if field.help_text %}<div class="field-hint">{{ field.help_text }}</div>{% endif %}
+              {% if field.errors %}<div class="text-danger small mt-1">{{ field.errors }}</div>{% endif %}
+            </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+
+        <p class="form-section-label"><i class="fa-solid fa-boxes-stacked me-1"></i> Cargo & Financials</p>
+        <div class="form-field-group mb-4">
+          {% for field in form %}
+            {% if field.name == "cargo_weight_kg" or field.name == "planned_distance_km" or field.name == "revenue" %}
+            <div class="form-field-item">
+              <label class="form-label">{{ field.label }}</label>
+              {{ field }}
+              {% if field.errors %}<div class="text-danger small mt-1">{{ field.errors }}</div>{% endif %}
+            </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+
+        {% if form.non_field_errors %}
+          <div class="alert alert-danger border-0 rounded-3 small p-2 mb-0">{{ form.non_field_errors }}</div>
+        {% endif %}
+
+      </div>
+
+      <div class="form-card-footer">
+        <button type="submit" class="btn btn-primary">
+          <i class="fa-solid fa-truck-ramp-box"></i> Create Trip (Draft)
+        </button>
+        <a href="{% url 'trips:list' %}" class="btn btn-outline-secondary">
+          <i class="fa-solid fa-xmark"></i> Cancel
+        </a>
+      </div>
+    </form>
+
+  </div>
 </div>
 {% endblock %}

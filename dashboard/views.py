@@ -37,15 +37,30 @@ def home(request):
     drivers_on_duty = Driver.objects.filter(status=Driver.Status.ON_TRIP).count()
 
     fleet_utilization = round((on_trip_vehicles / total_vehicles * 100), 2) if total_vehicles else 0
+    available_pct = round((available_vehicles / total_vehicles * 100), 2) if total_vehicles else 0
+    maintenance_pct = round((in_maintenance / total_vehicles * 100), 2) if total_vehicles else 0
+    on_trip_pct = round((on_trip_vehicles / total_vehicles * 100), 2) if total_vehicles else 0
+    total_trips = active_trips + pending_trips
+    active_trips_pct = round((active_trips / total_trips * 100), 2) if total_trips else 0
+    pending_trips_pct = round((pending_trips / total_trips * 100), 2) if total_trips else 0
+    new_vehicles = 0
 
     context = {
+        "total_vehicles": total_vehicles,
         "active_vehicles": active_vehicles,
         "available_vehicles": available_vehicles,
         "in_maintenance": in_maintenance,
+        "on_trip_vehicles": on_trip_vehicles,
         "active_trips": active_trips,
         "pending_trips": pending_trips,
         "drivers_on_duty": drivers_on_duty,
         "fleet_utilization": fleet_utilization,
+        "available_pct": available_pct,
+        "maintenance_pct": maintenance_pct,
+        "on_trip_pct": on_trip_pct,
+        "active_trips_pct": active_trips_pct,
+        "pending_trips_pct": pending_trips_pct,
+        "new_vehicles": new_vehicles,
         "type_choices": Vehicle.VehicleType.choices,
         "status_choices": Vehicle.Status.choices,
         "regions": Vehicle.objects.exclude(region="").values_list("region", flat=True).distinct(),
