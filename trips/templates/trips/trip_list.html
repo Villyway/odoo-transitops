@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Trips - TransitOps{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h3><i class="fa-solid fa-route text-primary"></i> Trip Management</h3>
+  <a href="{% url 'trips:add' %}" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Create Trip</a>
+</div>
+
+<form method="get" class="row g-2 mb-3">
+  <div class="col-auto">
+    <select name="status" class="form-select">
+      <option value="">All Statuses</option>
+      {% for val, label in status_choices %}
+        <option value="{{ val }}" {% if request.GET.status == val %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-auto"><button class="btn btn-outline-primary" type="submit"><i class="fa-solid fa-filter"></i></button></div>
+</form>
+
+<div class="card p-3">
+<div class="table-responsive">
+<table class="table table-hover align-middle">
+  <thead><tr><th>#</th><th>Route</th><th>Vehicle</th><th>Driver</th><th>Cargo (kg)</th><th>Distance (km)</th><th>Status</th><th>Actions</th></tr></thead>
+  <tbody>
+    {% for t in trips %}
+    <tr>
+      <td>{{ t.id }}</td>
+      <td>{{ t.source }} → {{ t.destination }}</td>
+      <td>{{ t.vehicle.registration_number }}</td>
+      <td>{{ t.driver.name }}</td>
+      <td>{{ t.cargo_weight_kg }}</td>
+      <td>{{ t.planned_distance_km }}</td>
+      <td>
+        {% if t.status == "DRAFT" %}<span class="badge bg-secondary badge-status">Draft</span>
+        {% elif t.status == "DISPATCHED" %}<span class="badge bg-primary badge-status">Dispatched</span>
+        {% elif t.status == "COMPLETED" %}<span class="badge bg-success badge-status">Completed</span>
+        {% else %}<span class="badge bg-danger badge-status">Cancelled</span>{% endif %}
+      </td>
+      <td>
+        {% if t.status == "DRAFT" %}
+          <a href="{% url 'trips:dispatch' t.pk %}" class="btn btn-sm btn-primary" onclick="return confirm('Dispatch this trip?')"><i class="fa-solid fa-truck-ramp-box"></i> Dispatch</a>
+          <a href="{% url 'trips:cancel' t.pk %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Cancel this trip?')">Cancel</a>
+        {% elif t.status == "DISPATCHED" %}
+          <a href="{% url 'trips:complete' t.pk %}" class="btn btn-sm btn-success"><i class="fa-solid fa-flag-checkered"></i> Complete</a>
+          <a href="{% url 'trips:cancel' t.pk %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Cancel this trip?')">Cancel</a>
+        {% else %}
+          <span class="text-muted">—</span>
+        {% endif %}
+      </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="8" class="text-center text-muted py-4">No trips found.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+</div>
+{% endblock %}

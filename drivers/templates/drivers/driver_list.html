@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Drivers - TransitOps{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h3><i class="fa-solid fa-id-card text-primary"></i> Driver Management</h3>
+  <a href="{% url 'drivers:add' %}" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Add Driver</a>
+</div>
+
+<form method="get" class="row g-2 mb-3">
+  <div class="col-auto">
+    <input type="text" name="q" value="{{ request.GET.q|default:'' }}" class="form-control" placeholder="Search name / license no">
+  </div>
+  <div class="col-auto">
+    <select name="status" class="form-select">
+      <option value="">All Statuses</option>
+      {% for val, label in status_choices %}
+        <option value="{{ val }}" {% if request.GET.status == val %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-auto"><button class="btn btn-outline-primary" type="submit"><i class="fa-solid fa-search"></i></button></div>
+</form>
+
+<div class="card p-3">
+<div class="table-responsive">
+<table class="table table-hover align-middle">
+  <thead><tr><th>Name</th><th>License No.</th><th>Category</th><th>License Expiry</th><th>Contact</th><th>Safety Score</th><th>Status</th><th>Actions</th></tr></thead>
+  <tbody>
+    {% for d in drivers %}
+    <tr>
+      <td>{{ d.name }}</td>
+      <td>{{ d.license_number }}</td>
+      <td>{{ d.license_category }}</td>
+      <td>
+        {{ d.license_expiry_date }}
+        {% if d.license_is_expired %}<span class="badge bg-danger ms-1">Expired</span>{% endif %}
+      </td>
+      <td>{{ d.contact_number }}</td>
+      <td>{{ d.safety_score }}</td>
+      <td>
+        {% if d.status == "AVAILABLE" %}<span class="badge bg-success badge-status">Available</span>
+        {% elif d.status == "ON_TRIP" %}<span class="badge bg-primary badge-status">On Trip</span>
+        {% elif d.status == "OFF_DUTY" %}<span class="badge bg-secondary badge-status">Off Duty</span>
+        {% else %}<span class="badge bg-danger badge-status">Suspended</span>{% endif %}
+      </td>
+      <td>
+        <a href="{% url 'drivers:edit' d.pk %}" class="btn btn-sm btn-outline-primary"><i class="fa-solid fa-edit"></i></a>
+        <a href="{% url 'drivers:delete' d.pk %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this driver?')"><i class="fa-solid fa-trash"></i></a>
+      </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="8" class="text-center text-muted py-4">No drivers added yet.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+</div>
+{% endblock %}

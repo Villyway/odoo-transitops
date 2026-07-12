@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}{{ title }} - TransitOps{% endblock %}
+{% block content %}
+<h3 class="mb-3">{{ title }}</h3>
+<div class="card p-4" style="max-width:650px;">
+<form method="post">
+  {% csrf_token %}
+  {% for field in form %}
+    <div class="mb-3">
+      <label class="form-label">{{ field.label }}</label>
+      {{ field }}
+      {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+      {% if field.errors %}<div class="text-danger small">{{ field.errors }}</div>{% endif %}
+    </div>
+  {% endfor %}
+  {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
+  <button type="submit" class="btn btn-primary">Create Trip (Draft)</button>
+  <a href="{% url 'trips:list' %}" class="btn btn-outline-secondary">Cancel</a>
+</form>
+</div>
+{% endblock %}

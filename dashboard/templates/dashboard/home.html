@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - TransitOps{% endblock %}
+{% block content %}
+<h3 class="mb-4"><i class="fa-solid fa-gauge text-primary"></i> Operations Dashboard</h3>
+
+<form method="get" class="row g-2 mb-4">
+  <div class="col-auto">
+    <select name="type" class="form-select">
+      <option value="">All Vehicle Types</option>
+      {% for val, label in type_choices %}
+        <option value="{{ val }}" {% if request.GET.type == val %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-auto">
+    <select name="status" class="form-select">
+      <option value="">All Statuses</option>
+      {% for val, label in status_choices %}
+        <option value="{{ val }}" {% if request.GET.status == val %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-auto">
+    <select name="region" class="form-select">
+      <option value="">All Regions</option>
+      {% for r in regions %}
+        <option value="{{ r }}" {% if request.GET.region == r %}selected{% endif %}>{{ r }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-auto">
+    <button class="btn btn-primary" type="submit"><i class="fa-solid fa-filter"></i> Filter</button>
+    <a href="{% url 'dashboard:home' %}" class="btn btn-outline-secondary">Reset</a>
+  </div>
+</form>
+
+<div class="row g-3">
+  <div class="col-md-3 col-sm-6">
+    <div class="card kpi-card p-3">
+      <div class="text-muted small">Active Vehicles</div>
+      <div class="kpi-value text-primary">{{ active_vehicles }}</div>
+    </div>
+  </div>
+  <div class="col-md-3 col-sm-6">
+    <div class="card kpi-card p-3">
+      <div class="text-muted small">Available Vehicles</div>
+      <div class="kpi-value text-success">{{ available_vehicles }}</div>
+    </div>
+  </div>
+  <div class="col-md-3 col-sm-6">
+    <div class="card kpi-card p-3">
+      <div class="text-muted small">Vehicles In Maintenance</div>
+      <div class="kpi-value text-warning">{{ in_maintenance }}</div>
+    </div>
+  </div>
+  <div class="col-md-3 col-sm-6">
+    <div class="card kpi-card p-3">
+      <div class="text-muted small">Fleet Utilization</div>
+      <div class="kpi-value text-info">{{ fleet_utilization }}%</div>
+    </div>
+  </div>
+  <div class="col-md-4 col-sm-6">
+    <div class="card kpi-card p-3">
+      <div class="text-muted small">Active Trips</div>
+      <div class="kpi-value text-primary">{{ active_trips }}</div>
+    </div>
+  </div>
+  <div class="col-md-4 col-sm-6">
+    <div class="card kpi-card p-3">
+      <div class="text-muted small">Pending Trips</div>
+      <div class="kpi-value text-secondary">{{ pending_trips }}</div>
+    </div>
+  </div>
+  <div class="col-md-4 col-sm-6">
+    <div class="card kpi-card p-3">
+      <div class="text-muted small">Drivers On Duty</div>
+      <div class="kpi-value text-dark">{{ drivers_on_duty }}</div>
+    </div>
+  </div>
+</div>
+
+<div class="mt-4">
+  <a href="{% url 'trips:add' %}" class="btn btn-primary"><i class="fa-solid fa-plus"></i> New Trip</a>
+  <a href="{% url 'vehicles:add' %}" class="btn btn-outline-primary"><i class="fa-solid fa-plus"></i> Register Vehicle</a>
+  <a href="{% url 'drivers:add' %}" class="btn btn-outline-primary"><i class="fa-solid fa-plus"></i> Add Driver</a>
+  <a href="{% url 'dashboard:reports' %}" class="btn btn-outline-dark"><i class="fa-solid fa-chart-line"></i> View Reports</a>
+</div>
+{% endblock %}
